@@ -1,0 +1,133 @@
+name: Release Docker Image (Build and Push)
+
+concurrency: 
+  group: "geonode-docker_build_release"
+  cancel-in-progress: true
+
+env:
+  TITLE: "52°North GeoNode Docker Image"
+  VENDOR: "52°North GmbH"
+  AUTHORS: "https://52North.org/"
+  DESCRIPTION: "Builds and publishes the Docker images GeoNode, GeoServer, Nginx"
+  LICENSE: "GPL-3.0"
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_and_push_geoserver:
+    runs-on: ubuntu-22.04
+    env:
+      IMAGE: 52north/geonode-geoserver
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Parse semver string
+        id: semver_parser 
+        uses: booxmedialtd/ws-action-parse-semver@v1
+        with:
+          input_string: "${{github.ref_name}}"
+          version_extractor_regex: '(.*)-52n'
+      -
+        name: build and push geoserver
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/geoserver/Dockerfile
+          dockercontext: ./docker/geoserver/
+          image: 52north/geonode-geoserver
+          tags: ${{ steps.semver_parser.outputs.fullversion }}
+          allow_tag_override: "false"
+          oci_title: "52°North GeoServer image for GeoNode"
+          oci_description: "GeoServer built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+  build_and_push_geoserver_data:
+    runs-on: ubuntu-22.04
+    env:
+      IMAGE: 52north/geonode-geoserver_data
+    steps:
+      - 
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Parse semver string
+        id: semver_parser 
+        uses: booxmedialtd/ws-action-parse-semver@v1
+        with:
+          input_string: "${{github.ref_name}}"
+          version_extractor_regex: '(.*)-52n'
+      - 
+        name: build and push geoserver_data
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/geoserver_data/Dockerfile
+          dockercontext: ./docker/geoserver_data/
+          image: 52north/geonode-geoserver_data
+          tags: ${{ steps.semver_parser.outputs.fullversion }}
+          allow_tag_override: "false"
+          oci_title: "52°North GeoServer data image for GeoNode"
+          oci_description: "GeoServer Data built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+  build_and_push_nginx:
+    runs-on: ubuntu-22.04
+    steps:
+      - 
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Parse semver string
+        id: semver_parser 
+        uses: booxmedialtd/ws-action-parse-semver@v1
+        with:
+          input_string: "${{github.ref_name}}"
+          version_extractor_regex: '(.*)-52n'
+      - 
+        name: build and push nginx
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/nginx/Dockerfile
+          dockercontext: ./docker/nginx/
+          image: 52north/geonode-nginx
+          tags: ${{ steps.semver_parser.outputs.fullversion }}
+          allow_tag_override: "false"
+          oci_title: "52°North Nginx image for GeoNode"
+          oci_description: "Nginx built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  
+  build_and_push_postgis:
+    runs-on: ubuntu-22.04
+    env:
+      IMAGE: 52north/geonode-postgis
+    steps:
+      - 
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Parse semver string
+        id: semver_parser 
+        uses: booxmedialtd/ws-action-parse-semver@v1
+        with:
+          input_string: "${{github.ref_name}}"
+          version_extractor_regex: '(.*)-52n'
+      - 
+        name: build and push postgis
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/postgis/Dockerfile
+          dockercontext: ./docker/postgis/
+          image: 52north/geonode-postgis
+          tags: ${{ steps.semver_parser.outputs.fullversion }}
+          allow_tag_override: "false"
+          oci_title: "52°North PostGIS image for GeoNode"
+          oci_description: "PostGIS Data built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
