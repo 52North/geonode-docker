@@ -1,16 +1,13 @@
-name: "[52n-4.2.x -> 4.2.x] Builds GeoNode Docker Images"
+name: "[52n-master -> latest] Builds GeoNode Docker Images"
 
 concurrency:
-  group: "geonode_build_4.2.x"
+  group: "geonode_build_master"
   cancel-in-progress: true
-
-env:
-  TAG: 4.2.x
 
 on:
   push:
     branches:
-      - "52n-4.2.x"
+      - "52n-master"
 
 jobs:
   build_and_push_geoserver:
@@ -26,7 +23,6 @@ jobs:
           dockerfile: ./docker/geoserver/Dockerfile
           dockercontext: ./docker/geoserver/
           image: 52north/geonode-geoserver
-          tags: ${{ env.TAG }}
           allow_tag_override: "true"
           oci_title: "52°North GeoServer image for GeoNode"
           oci_description: "GeoServer built for GeoNode from 52north/geonode-docker"
@@ -47,7 +43,6 @@ jobs:
           dockerfile: ./docker/geoserver_data/Dockerfile
           dockercontext: ./docker/geoserver_data/
           image: 52north/geonode-geoserver_data
-          tags: ${{ env.TAG }}
           allow_tag_override: "true"
           oci_title: "52°North GeoServer data image for GeoNode"
           oci_description: "GeoServer Data built for GeoNode from 52north/geonode-docker"
@@ -66,7 +61,6 @@ jobs:
           dockerfile: ./docker/nginx/Dockerfile
           dockercontext: ./docker/nginx/
           image: 52north/geonode-nginx
-          tags: ${{ env.TAG }}
           allow_tag_override: "true"
           oci_title: "52°North Nginx image for GeoNode"
           oci_description: "Nginx built for GeoNode from 52north/geonode-docker"
@@ -87,7 +81,6 @@ jobs:
           dockerfile: ./docker/postgis/Dockerfile
           dockercontext: ./docker/postgis/
           image: 52north/geonode-postgis
-          tags: ${{ env.TAG }}
           allow_tag_override: "true"
           oci_title: "52°North PostGIS image for GeoNode"
           oci_description: "PostGIS Data built for GeoNode from 52north/geonode-docker"
