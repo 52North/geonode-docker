@@ -1,0 +1,96 @@
+name: "[52n-4.2.x -> 4.2.x] Builds GeoNode Docker Images"
+
+concurrency:
+  group: "geonode_build_4.2.x"
+  cancel-in-progress: true
+
+env:
+  TAG: 4.2.x
+
+on:
+  push:
+    branches:
+      - "52n-4.2.x"
+
+jobs:
+  build_and_push_geoserver:
+    runs-on: ubuntu-22.04
+    env:
+      IMAGE: 52north/geonode-geoserver
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: build and push geoserver
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/geoserver/Dockerfile
+          dockercontext: ./docker/geoserver/
+          image: 52north/geonode-geoserver
+          tags: ${{ env.TAG }}
+          allow_tag_override: "true"
+          oci_title: "52°North GeoServer image for GeoNode"
+          oci_description: "GeoServer built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+  build_and_push_geoserver_data:
+    runs-on: ubuntu-22.04
+    env:
+      IMAGE: 52north/geonode-geoserver_data
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: build and push geoserver_data
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/geoserver_data/Dockerfile
+          dockercontext: ./docker/geoserver_data/
+          image: 52north/geonode-geoserver_data
+          tags: ${{ env.TAG }}
+          allow_tag_override: "true"
+          oci_title: "52°North GeoServer data image for GeoNode"
+          oci_description: "GeoServer Data built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+  build_and_push_nginx:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: build and push nginx
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/nginx/Dockerfile
+          dockercontext: ./docker/nginx/
+          image: 52north/geonode-nginx
+          tags: ${{ env.TAG }}
+          allow_tag_override: "true"
+          oci_title: "52°North Nginx image for GeoNode"
+          oci_description: "Nginx built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  
+  build_and_push_postgis:
+    runs-on: ubuntu-22.04
+    env:
+      IMAGE: 52north/geonode-postgis
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: build and push postgis
+        uses: ./.github/actions/52n-build_and_push
+        with:
+          dockerfile: ./docker/postgis/Dockerfile
+          dockercontext: ./docker/postgis/
+          image: 52north/geonode-postgis
+          tags: ${{ env.TAG }}
+          allow_tag_override: "true"
+          oci_title: "52°North PostGIS image for GeoNode"
+          oci_description: "PostGIS Data built for GeoNode from 52north/geonode-docker"
+          registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          registry_password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
