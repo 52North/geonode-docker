@@ -39,7 +39,7 @@ jobs:
           image: 52north/geonode-geoserver
           tags: |
             ${{ steps.semver_parser.outputs.major }}
-            ${{ steps.semver_parser.outputs.major }}-${{ steps.semver_parser.outputs.minor }}
+            ${{ steps.semver_parser.outputs.major }}.${{ steps.semver_parser.outputs.minor }}
             ${{ steps.semver_parser.outputs.fullversion }}
           allow_tag_override: "false"
           oci_title: "52°North GeoServer image for GeoNode"
